@@ -2,8 +2,7 @@
   <div class="user" @click="onClick" :class="{ selected: selected }">
     <div class="description">
       <div class="name" v-if="!user.self">
-        {{ user.username }} 
-        <!-- {{ user.self ? " (yourself)" : "" }} -->
+        {{ user.username }}
       </div>
       <div class="status" v-if="!user.self">
         <status-icon :connected="user.connected" />{{ status }}

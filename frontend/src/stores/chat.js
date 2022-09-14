@@ -11,17 +11,20 @@ export const useChatStore = defineStore({
             state.rawItems,
     },
     actions: {
-        addChat( id, content, to ) {
+        addChat( id, content, date, to ) {
             try{// axios
                 socket.emit("private message", {
                 id,
                 content,
+                date,
                 to,
                 });
                 this.rawItems.push({
                     id,
                     content,
+                    date,
                     fromSelf: true,
+                    sent: true,
                 });
             } catch (error) {
                 console.log('lagi error')

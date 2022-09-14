@@ -53,6 +53,7 @@ export default {
     socket.on("connect_error", (err) => {
       if (err.message === "invalid username") {
         this.usernameAlreadySelected = false;
+        console.log('ini error Login')
       }
     });
   },

@@ -102,10 +102,11 @@ io.on("connection", (socket) => {
   //   messageStore.saveMessage(message);
   // });
 
-  socket.on("private message", ({ id, content, to }) => {
+  socket.on("private message", ({ id, content, date, to }) => {
     const message = {
       id,
       content,
+      date,
       from: socket.userID,
       to,
       sent: true,

@@ -13,12 +13,12 @@
                 :class="message.fromSelf ? 'chat-item-container' : 'chat-item-container chat-item-container-others'"
               >
               
-              <div v-if="bdelete && message.fromSelf" class="chat-item-actions" @click="deleteCHAT(message, index) ">
+              <div v-if="bdelete && message.fromSelf" class="chat-item-actions" @click="deleteCHAT(message, index)">
                 <button type="button" class="btn btn-danger">X</button>
               </div>
 
-              <div v-if="bdelete && message.fromSelf" class="chat-item-actions">
-                <button type="button" class="btn btn-warning">R</button>
+              <div v-if="!message.sent && message.fromSelf" class="chat-item-actions">
+                <button type="button" class="btn btn-warning" @click="resendCHAT(message)">R</button>
               </div>
 
               <div :class="message.fromSelf ? 'chat-item' : 'chat-item chat-item-others'" @click="bdelete = !bdelete">
@@ -26,7 +26,7 @@
                   {{ message.content }}
                 </div>
                 <div>
-                  <sub>{{ message.id }}</sub> 
+                  <sub>{{ message.date }}</sub> 
                 </div>
               </div>
                 <br>
@@ -55,7 +55,7 @@ import StatusIcon from "./StatusIcon.vue";
 
 export default {
   name: "MessagePanel",
-  emits: ['input', 'deleteChat'],
+  emits: ['input', 'deleteChat', 'resendChat'],
   setup() {
     const Chat = useChatStore()
     return { Chat }
@@ -81,6 +81,11 @@ export default {
 
     deleteCHAT(message, index) {
       this.$emit("deleteChat", message, index);
+    },
+
+    resendCHAT(message) {
+      //console.log('resendChat', message)
+      this.$emit("resendChat", message);
     },
 
     displaySender(message, index) {

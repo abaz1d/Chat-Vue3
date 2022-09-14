@@ -16,6 +16,7 @@
         :user="selectedUser"
         @input="onMessage"
         @deleteChat="deleteChat"
+        @resendChat="resendChat"
         class="content-chatbox"
       />
     </div>
@@ -63,22 +64,35 @@ export default {
     // },
 
     onMessage(content) {
-      const id = new Date().toLocaleTimeString(['it-IT'], { hour: '2-digit', minute: '2-digit' });
+      const id = Date.now()
+      const date = new Date().toLocaleTimeString(['it-IT'], { hour: '2-digit', minute: '2-digit' });
       const to = this.selectedUser.userID
       if (this.selectedUser) {
-      this.Chat.addChat( id, content, to )
-        // socket.emit("private message", {
-        //   id,
-        //   content,
-        //   to,
-        //   sent: true,
-        // });
-        this.selectedUser.messages.push({
-          id,
-          content,
-          fromSelf: true,
-          sent: true,
-        });
+        if (socket.connected) {
+          console.log('ada koneksi')
+          this.Chat.addChat( id, content, date, to )
+          // socket.emit("private message", {
+          //   id,
+          //   content,
+          //   to,
+          //   // sent: true,
+          // });
+          this.selectedUser.messages.push({
+            id,
+            content,
+            date,
+            fromSelf: true,
+            sent: true,
+          });
+        } else {
+          console.log('tidak ada koneksi')
+          this.selectedUser.messages.push({
+            id,
+            content,
+            fromSelf: true,
+            sent: false,
+          });
+        }
       }
     },
 
@@ -92,6 +106,7 @@ export default {
       window.location.href = "/"
       },
     deleteChat(messageDel, msgindx) {
+      console.log('onMesag', messageDel)
       const to = this.selectedUser.userID
       const msgdelid = messageDel.id
       //console.log('ini',to, from)
@@ -104,7 +119,41 @@ export default {
         })
       }
     },
+
+    resendChat(msgResend) {
+      console.log('resendChat', msgResend)
+      const id = msgResend.id;
+      const content = msgResend.content
+      const to = this.selectedUser.userID
+      if (this.selectedUser) {
+      //this.Chat.addChat( id, content, to )
+        if (socket.connected) {
+          console.log('ada koneksi resend')
+          // socket.emit("private message", {
+          //   id,
+          //   content,
+          //   to,
+          //   sent: true,
+          // });
+          this.selectedUser.messages.map(item => {
+            if(item.id == id ) {
+              item.sent = true
+            }
+            return item
+          });
+        } else {
+          console.log('tidak ada koneksi resend')
+          this.selectedUser.messages.map(item => {
+            if(item.id == id ) {
+              item.sent = false
+            }
+            return item
+          });
+        }
+      }
+    },
   },
+
   // mounted() {
   //   console.log('mount',JSON.stringify(this.users))
   // },
@@ -197,7 +246,7 @@ export default {
     //   }
     // });
 
-    socket.on("private message", ({ id, content, from, to, sent }) => {
+    socket.on("private message", ({ id, content, date, from, to, sent }) => {
       for (let i = 0; i < this.users.length; i++) {
         const user = this.users[i];
         const fromSelf = socket.userID === from;
@@ -205,6 +254,7 @@ export default {
           user.messages.push({
             id,
             content,
+            date,
             fromSelf,
             sent,
           });
@@ -235,6 +285,12 @@ export default {
       }
     });
 
+    socket.on("connect_error", function() {
+      if (this.selectedUser) {
+      console.log('ini errororororororor', this.selectedUser.messages)
+      }
+    });
+
   },
   destroyed() {
     socket.off("connect");
@@ -244,6 +300,7 @@ export default {
     socket.off("user disconnected");
     socket.off("private message");
     socket.off("delete message");
+    socket.off("connect_error");
   },
 };
 </script>

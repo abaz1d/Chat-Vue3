@@ -26,7 +26,7 @@ export default {
   },
   methods: {
     onUsernameSelection(username) {
-      console.log('username', username)
+      console.log("username", username);
       this.usernameAlreadySelected = true;
       socket.auth = { username };
       socket.connect();
@@ -53,11 +53,11 @@ export default {
     socket.on("connect_error", (err) => {
       if (err.message === "invalid username") {
         this.usernameAlreadySelected = false;
-        console.log('ini error Login')
+        console.log("ini error Login");
       }
     });
   },
-  destroyed() {
+  unmounted() {
     socket.off("connect_error");
   },
 };

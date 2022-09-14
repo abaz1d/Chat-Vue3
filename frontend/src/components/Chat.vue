@@ -1,8 +1,8 @@
 <template>
   <div class="container-chatbox">
     <main class="main-chatbox">
-    <div class="sidebar-chatbox">
-      <div class="title-sidebar-chatbox">Contacts</div>
+      <div class="sidebar-chatbox">
+        <div class="title-sidebar-chatbox">Contacts</div>
         <user
           v-for="user in users"
           :key="user.userID"
@@ -10,35 +10,37 @@
           :selected="selectedUser === user"
           @select="onSelectUser(user)"
         />
-    </div>
-    <div class="content-chatbox" v-if="selectedUser">
-      <message-panel
-        :user="selectedUser"
-        @input="onMessage"
-        @deleteChat="deleteChat"
-        @resendChat="resendChat"
-        class="content-chatbox"
-      />
-    </div>
-    <div v-else class="select-msg-chatbox-txt">Select a chat to start messaging</div>
-    <div class="footer">
-          <button class="btn-logout" @click="onLogout" >LOG OUT</button>
-        </div>
-  </main>
+      </div>
+      <div class="content-chatbox" v-if="selectedUser">
+        <message-panel
+          :user="selectedUser"
+          @input="onMessage"
+          @deleteChat="deleteChat"
+          @resendChat="resendChat"
+          class="content-chatbox"
+        />
+      </div>
+      <div v-else class="select-msg-chatbox-txt">
+        Select a chat to start messaging
+      </div>
+      <div class="footer">
+        <button class="btn-logout" @click="onLogout">LOG OUT</button>
+      </div>
+    </main>
   </div>
 </template>
 
 <script>
-import { useChatStore } from '../stores/chat';
+import { useChatStore } from "../stores/chat";
 import socket from "../socket";
 import User from "./User.vue";
 import MessagePanel from "./MessagePanel.vue";
 
 export default {
-  name: "Chat",
+  name: "ComponentChat",
   setup() {
-    const Chat = useChatStore()
-    return { Chat }
+    const Chat = useChatStore();
+    return { Chat };
   },
   components: { User, MessagePanel },
   data() {
@@ -64,13 +66,16 @@ export default {
     // },
 
     onMessage(content) {
-      const id = Date.now()
-      const date = new Date().toLocaleTimeString(['it-IT'], { hour: '2-digit', minute: '2-digit' });
-      const to = this.selectedUser.userID
+      const id = Date.now();
+      const date = new Date().toLocaleTimeString(["it-IT"], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      const to = this.selectedUser.userID;
       if (this.selectedUser) {
         if (socket.connected) {
-          console.log('ada koneksi')
-          this.Chat.addChat( id, content, date, to )
+          console.log("ada koneksi");
+          this.Chat.addChat(id, content, date, to);
           // socket.emit("private message", {
           //   id,
           //   content,
@@ -85,10 +90,11 @@ export default {
             sent: true,
           });
         } else {
-          console.log('tidak ada koneksi')
+          console.log("tidak ada koneksi");
           this.selectedUser.messages.push({
             id,
             content,
+            date,
             fromSelf: true,
             sent: false,
           });
@@ -103,51 +109,55 @@ export default {
     onLogout() {
       localStorage.removeItem("sessionID");
       localStorage.removeItem("userID");
-      window.location.href = "/"
-      },
+      window.location.href = "/";
+    },
     deleteChat(messageDel, msgindx) {
-      console.log('onMesag', messageDel)
-      const to = this.selectedUser.userID
-      const msgdelid = messageDel.id
+      console.log("onMesag", messageDel);
+      const to = this.selectedUser.userID;
+      const msgdelid = messageDel.id;
       //console.log('ini',to, from)
       if (this.selectedUser) {
-        this.Chat.removeChat(msgdelid, to, msgindx)
-        this.selectedUser.messages = this.selectedUser.messages.filter((item, index) => {
-          if(item.id != msgdelid) {
-            return item
+        this.Chat.removeChat(msgdelid, to, msgindx);
+        this.selectedUser.messages = this.selectedUser.messages.filter(
+          (item) => {
+            if (item.id != msgdelid) {
+              return item;
+            }
           }
-        })
+        );
       }
     },
 
     resendChat(msgResend) {
-      console.log('resendChat', msgResend)
+      console.log("resendChat", msgResend);
       const id = msgResend.id;
-      const content = msgResend.content
-      const to = this.selectedUser.userID
+      const content = msgResend.content;
+      const date = msgResend.date;
+      const to = this.selectedUser.userID;
       if (this.selectedUser) {
-      //this.Chat.addChat( id, content, to )
+        //this.Chat.addChat( id, content, to )
         if (socket.connected) {
-          console.log('ada koneksi resend')
+          console.log("ada koneksi resend");
+          this.Chat.addChat(id, content, date, to);
           // socket.emit("private message", {
           //   id,
           //   content,
           //   to,
           //   sent: true,
           // });
-          this.selectedUser.messages.map(item => {
-            if(item.id == id ) {
-              item.sent = true
+          this.selectedUser.messages.map((item) => {
+            if (item.id == id) {
+              item.sent = true;
             }
-            return item
+            return item;
           });
         } else {
-          console.log('tidak ada koneksi resend')
-          this.selectedUser.messages.map(item => {
-            if(item.id == id ) {
-              item.sent = false
+          console.log("tidak ada koneksi resend");
+          this.selectedUser.messages.map((item) => {
+            if (item.id == id) {
+              item.sent = false;
             }
-            return item
+            return item;
           });
         }
       }
@@ -273,10 +283,10 @@ export default {
         const fromSelf = socket.userID === from;
         if (user.userID === (fromSelf ? to : from)) {
           user.messages = user.messages.filter((item, index) => {
-          if(index != msgindx) {
-            return item
-          }
-        })
+            if (index != msgindx) {
+              return item;
+            }
+          });
           if (user !== this.selectedUser) {
             user.hasNewMessages = true;
           }
@@ -285,14 +295,13 @@ export default {
       }
     });
 
-    socket.on("connect_error", function() {
+    socket.on("connect_error", function () {
       if (this.selectedUser) {
-      console.log('ini errororororororor', this.selectedUser.messages)
+        console.log("ini errororororororor", this.selectedUser.messages);
       }
     });
-
   },
-  destroyed() {
+  unmounted() {
     socket.off("connect");
     socket.off("disconnect");
     socket.off("users");
@@ -306,7 +315,6 @@ export default {
 </script>
 
 <style scoped>
-
 .left-panel {
   position: fixed;
   left: 0;
@@ -344,10 +352,10 @@ export default {
 }
 
 .footer {
-   position: fixed;
-   left: 70px;
-   bottom: 20px;
-   padding: 5px;
-   width: 70%;
+  position: fixed;
+  left: 70px;
+  bottom: 20px;
+  padding: 5px;
+  width: 70%;
 }
 </style>

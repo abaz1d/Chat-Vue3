@@ -3,12 +3,12 @@
     <div class="chatlogin-box">
       <form class="form-chatlogin" @submit.prevent="onSubmit">
         <header class="header-chatlogin">LOGIN</header>
-        <input 
-          class="input-chatlogin" 
-          type="text" 
-          v-model="username" 
-          autocomplete="off" 
-          placeholder="Your username..." 
+        <input
+          class="input-chatlogin"
+          type="text"
+          v-model="username"
+          autocomplete="off"
+          placeholder="Your username..."
         />
         <button :disabled="!isValid" class="btn-chatlogin">LOGIN</button>
       </form>
@@ -17,14 +17,14 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref } from "vue";
 
 export default {
   name: "SelectUsername",
-  emits: ['input'],
+  emits: ["input"],
   data() {
     return {
-      username: ref(''),
+      username: ref(""),
     };
   },
   computed: {
@@ -35,7 +35,7 @@ export default {
   methods: {
     onSubmit() {
       this.$emit("input", this.username);
-      this.username = ''
+      this.username = "";
     },
   },
 };

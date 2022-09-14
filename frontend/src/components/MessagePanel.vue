@@ -4,62 +4,81 @@
       <status-icon :connected="user.connected" />{{ user.username }}
     </div>
     <div class="content-main-chatbox">
-        <div class="chatcontainer-chatbox-container">
-          <div class="chatcontainer-chatbox">
-            <div class="chat-item-box">
-              <li
-                v-for="(message, index) in user.messages"
-                :key="index"
-                :class="message.fromSelf ? 'chat-item-container' : 'chat-item-container chat-item-container-others'"
+      <div class="chatcontainer-chatbox-container">
+        <div class="chatcontainer-chatbox">
+          <div class="chat-item-box">
+            <li
+              v-for="(message, index) in user.messages"
+              :key="index"
+              :class="
+                message.fromSelf
+                  ? 'chat-item-container'
+                  : 'chat-item-container chat-item-container-others'
+              "
+            >
+              <div
+                v-if="bdelete && message.fromSelf"
+                class="chat-item-actions"
+                @click="deleteCHAT(message, index)"
               >
-              
-              <div v-if="bdelete && message.fromSelf" class="chat-item-actions" @click="deleteCHAT(message, index)">
                 <button type="button" class="btn btn-danger">X</button>
               </div>
 
-              <div v-if="!message.sent && message.fromSelf" class="chat-item-actions">
-                <button type="button" class="btn btn-warning" @click="resendCHAT(message)">R</button>
+              <div
+                v-if="!message.sent && message.fromSelf"
+                class="chat-item-actions"
+              >
+                <button
+                  type="button"
+                  class="btn btn-warning"
+                  @click="resendCHAT(message)"
+                >
+                  R
+                </button>
               </div>
 
-              <div :class="message.fromSelf ? 'chat-item' : 'chat-item chat-item-others'" @click="bdelete = !bdelete">
+              <div
+                :class="
+                  message.fromSelf ? 'chat-item' : 'chat-item chat-item-others'
+                "
+                @click="bdelete = !bdelete"
+              >
                 <div>
                   {{ message.content }}
                 </div>
                 <div>
-                  <sub>{{ message.date }}</sub> 
+                  <sub>{{ message.date }}</sub>
                 </div>
               </div>
-                <br>
-              </li>
-            </div>
+              <br />
+            </li>
           </div>
-          
         </div>
       </div>
-      <form @submit.prevent="onSubmit" class="chatform-chatbox">
-            <textarea 
-              type="text" 
-              v-model="input" 
-              class="chatinput-chatbox" 
-              @keypress.enter="onSubmit" 
-              placeholder="Your message..." 
-            />
-            <button :disabled="!isValid" class="send-button">Send</button>
-          </form>  
+    </div>
+    <form @submit.prevent="onSubmit" class="chatform-chatbox">
+      <textarea
+        type="text"
+        v-model="input"
+        class="chatinput-chatbox"
+        @keypress.enter="onSubmit"
+        placeholder="Your message..."
+      />
+      <button :disabled="!isValid" class="send-button">Send</button>
+    </form>
   </div>
 </template>
 
 <script>
-import { useChatStore } from '../stores/chat';
+import { useChatStore } from "../stores/chat";
 import StatusIcon from "./StatusIcon.vue";
 
 export default {
   name: "MessagePanel",
-  emits: ['input', 'deleteChat', 'resendChat'],
+  emits: ["input", "deleteChat", "resendChat"],
   setup() {
-    const Chat = useChatStore()
-    return { Chat }
-    
+    const Chat = useChatStore();
+    return { Chat };
   },
   components: {
     StatusIcon,
@@ -69,7 +88,7 @@ export default {
   },
   data() {
     return {
-      input: '',
+      input: "",
       bdelete: false,
     };
   },
@@ -105,8 +124,8 @@ export default {
 </script>
 
 <style scoped>
-  .box {
- width: 100%;
+.box {
+  width: 100%;
 }
 .header {
   line-height: 40px;
@@ -188,5 +207,4 @@ export default {
   border-radius: 0px 15px 15px 15px;
   color: #fff;
 }
-
 </style>

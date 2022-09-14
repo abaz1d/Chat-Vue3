@@ -11,19 +11,15 @@ class InMemoryMessageStore extends MessageStore {
 
   saveMessage(message) {
     this.messages.push(message);
-    console.log('savethis.messages',this.messages)
+    console.log('add', message)
   }
 
   updMessage(id) {
   this.messages = this.messages.filter(item => {
     if(item.id != id) {
     return item  
-    } else {
-      console.log('errmesaage')
-    }
-  }) 
-  console.log('hapus',this.messages)
-  console.log('id',id)
+    } 
+  })
   } 
 
   findMessagesForUser(userID) {

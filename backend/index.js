@@ -90,12 +90,25 @@ io.on("connection", (socket) => {
   });
 
   // forward the private message to the right recipient (and to other tabs of the sender)
+  // socket.on("private message", ({ id, content, to }) => {
+  //   const message = {
+  //     id,
+  //     content,
+  //     sent: true,
+  //     from: socket.userID,
+  //     to,
+  //   };
+  //   socket.to(to).to(socket.userID).emit("private message", message);
+  //   messageStore.saveMessage(message);
+  // });
+
   socket.on("private message", ({ id, content, to }) => {
     const message = {
       id,
       content,
       from: socket.userID,
       to,
+      sent: true,
     };
     socket.to(to).to(socket.userID).emit("private message", message);
     messageStore.saveMessage(message);

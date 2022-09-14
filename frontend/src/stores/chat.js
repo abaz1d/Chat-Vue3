@@ -12,18 +12,20 @@ export const useChatStore = defineStore({
     },
     actions: {
         addChat( id, content, to ) {
-            // axios
-            socket.emit("private message", {
-            id,
-            content,
-            to,
-            });
-            this.rawItems.push({
+            try{// axios
+                socket.emit("private message", {
                 id,
                 content,
-                fromSelf: true,
-            });
-            console.log('this.rawItems',this.rawItems)
+                to,
+                });
+                this.rawItems.push({
+                    id,
+                    content,
+                    fromSelf: true,
+                });
+            } catch (error) {
+                console.log('lagi error')
+            }
         },
 
         removeChat(msgdelid, to, msgindx) {

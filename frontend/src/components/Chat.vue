@@ -47,20 +47,41 @@ export default {
     };
   },
   methods: {
+    // onMessage(content) {
+    //   console.log('content',content)
+    //   const id = Date.now()
+    //   const to = this.selectedUser.userID
+    //   //console.log('to',to)
+    //   if (this.selectedUser) {
+    //     this.Chat.addChat( id, content, to )
+    //     this.selectedUser.messages.push({
+    //       id,
+    //       content,
+    //       fromSelf: true,
+    //     });
+    //   }
+    // },
+
     onMessage(content) {
-      console.log('content',content)
-      const id = Date.now()
+      const id = new Date().toLocaleTimeString(['it-IT'], { hour: '2-digit', minute: '2-digit' });
       const to = this.selectedUser.userID
-      //console.log('to',to)
       if (this.selectedUser) {
-        this.Chat.addChat( id, content, to )
+      this.Chat.addChat( id, content, to )
+        // socket.emit("private message", {
+        //   id,
+        //   content,
+        //   to,
+        //   sent: true,
+        // });
         this.selectedUser.messages.push({
           id,
           content,
           fromSelf: true,
+          sent: true,
         });
       }
     },
+
     onSelectUser(user) {
       this.selectedUser = user;
       user.hasNewMessages = false;
@@ -84,6 +105,9 @@ export default {
       }
     },
   },
+  // mounted() {
+  //   console.log('mount',JSON.stringify(this.users))
+  // },
   created() {
     socket.on("connect", () => {
       this.users.forEach((user) => {
@@ -153,17 +177,36 @@ export default {
       }
     });
 
-    socket.on("private message", ({ id, content, from, to }) => {
-      //console.log('to',to)
+    // socket.on("private message", ({ id, content, from, to }) => {
+    //   //console.log('to',to)
+    //   for (let i = 0; i < this.users.length; i++) {
+    //     const user = this.users[i];
+    //     console.log('useradd',useradd)
+    //     const fromSelf = socket.userID === from;
+    //     if (user.userID === (fromSelf ? to : from)) {
+    //       user.messages.push({
+    //         id,
+    //         content,
+    //         fromSelf,
+    //       });
+    //       if (user !== this.selectedUser) {
+    //         user.hasNewMessages = true;
+    //       }
+    //       break;
+    //     }
+    //   }
+    // });
+
+    socket.on("private message", ({ id, content, from, to, sent }) => {
       for (let i = 0; i < this.users.length; i++) {
         const user = this.users[i];
-        console.log('useradd',useradd)
         const fromSelf = socket.userID === from;
         if (user.userID === (fromSelf ? to : from)) {
           user.messages.push({
             id,
             content,
             fromSelf,
+            sent,
           });
           if (user !== this.selectedUser) {
             user.hasNewMessages = true;

@@ -17,9 +17,16 @@
                 <button type="button" class="btn btn-danger">X</button>
               </div>
 
+              <div v-if="bdelete && message.fromSelf" class="chat-item-actions">
+                <button type="button" class="btn btn-warning">R</button>
+              </div>
+
               <div :class="message.fromSelf ? 'chat-item' : 'chat-item chat-item-others'" @click="bdelete = !bdelete">
                 <div>
                   {{ message.content }}
+                </div>
+                <div>
+                  <sub>{{ message.id }}</sub> 
                 </div>
               </div>
                 <br>
@@ -44,7 +51,6 @@
 
 <script>
 import { useChatStore } from '../stores/chat';
-import { ref } from 'vue'
 import StatusIcon from "./StatusIcon.vue";
 
 export default {
@@ -63,7 +69,7 @@ export default {
   },
   data() {
     return {
-      input: ref(''),
+      input: '',
       bdelete: false,
     };
   },

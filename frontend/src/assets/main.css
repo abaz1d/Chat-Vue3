@@ -280,8 +280,8 @@
 }
 
 .chat-item-actions {
-  margin-right: 30px;
-  width: 20px;
+  margin-right: 50px;
+  width: 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;

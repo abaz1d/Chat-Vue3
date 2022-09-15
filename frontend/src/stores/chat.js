@@ -32,7 +32,7 @@ export const useChatStore = defineStore({
     },
 
     removeChat(msgdelid, to, msgindx) {
-      socket.emit("update message", { msgdelid, to, msgindx });
+      socket.emit("delete message", { msgdelid, to, msgindx });
       this.rawItems = this.rawItems.filter((item) => {
         if (item.id != msgdelid) {
           console.log("item", item);

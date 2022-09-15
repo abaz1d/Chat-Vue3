@@ -1,11 +1,5 @@
 const Chat = require('./models/chat');
 const User = require('./models/user');
-
-Chat.find((err, result) => {
-  if (err) throw err;
-
-  this.messages = result;
-});
 /* abstract */ 
 class MessageStore {
   saveMessage(message) {}
@@ -19,27 +13,16 @@ class InMemoryMessageStore extends MessageStore {
   }
 
   saveMessage(message) {
-    try {
-      Chat.create(message)
-      this.messages.push(message);
-      console.log('msg tersimpan')
-    } catch (e) {
-      console.log('gagal save msg', e)
-    }
+    this.messages.push(message);
+    console.log('add', message)
   }
 
   deleteMessage(id) {
-    try {
-      Chat.deleteOne({id: id}).exec();
-      this.messages = this.messages.filter(item => {
-        if(item.id != id) {
-        return item  
-        } 
-      })
-      console.log('msg terhapus')
-    } catch (e) {
-      console.log('gagal hapus msg', e)
-    }
+  this.messages = this.messages.filter(item => {
+    if(item.id != id) {
+    return item  
+    } 
+  })
   } 
 
   findMessagesForUser(userID) {

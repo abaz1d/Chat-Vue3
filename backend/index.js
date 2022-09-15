@@ -1,16 +1,17 @@
-// const { createServer } = require("http");
-// const { Server } = require("socket.io");
-
-// const httpServer = createServer();
-// const io = new Server(httpServer, {http://127.0.0.1:5173});
-
-
-const httpServer = require("http").createServer();
+const app = require("express")();
+const httpServer = require("http").createServer(app);
+const mongoose = require('mongoose');
 const io = require("socket.io")(httpServer, {
   cors: {
     origin: "http://localhost:5173",
   },
 });
+
+main().catch(err => console.log(err));
+
+async function main() {
+    await mongoose.connect('mongodb://localhost:27017/chatdb');
+}
 
 const crypto = require("crypto");
 const randomId = () => crypto.randomBytes(8).toString("hex");
@@ -102,7 +103,7 @@ io.on("connection", (socket) => {
     messageStore.saveMessage(message);
   });
 
-  socket.on("update message", ({ msgdelid, to, msgindx }) => {
+  socket.on("delete message", ({ msgdelid, to, msgindx }) => {
     const message = {
       msgdelid,
       msgindx,
@@ -110,8 +111,7 @@ io.on("connection", (socket) => {
       to,
     };
     socket.to(to).to(socket.userID).emit("delete message", message);
-    console.log('indxid',msgdelid)
-    messageStore.updMessage(msgdelid);
+    messageStore.deleteMessage(msgdelid);
   });
 
   // notify users upon disconnection

@@ -21,7 +21,7 @@
                 class="chat-item-actions"
                 @click="deleteCHAT(message, index)"
               >
-                <button type="button" class="btn btn-danger">X</button>
+                <button type="button" class="btn  btn-lg">&#128465;</button>
               </div>
 
               <div
@@ -33,7 +33,7 @@
                   class="btn btn-warning"
                   @click="resendCHAT(message)"
                 >
-                  R
+                &#8635;
                 </button>
               </div>
 

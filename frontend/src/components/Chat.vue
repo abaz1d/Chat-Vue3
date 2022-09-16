@@ -24,7 +24,7 @@
         Select a chat to start messaging
       </div>
       <div class="footer">
-        <button class="btn-logout" @click="onLogout">LOG OUT</button>
+        <button class="btn-logout" @click="logOUT">LOG OUT</button>
       </div>
     </main>
   </div>
@@ -38,6 +38,7 @@ import MessagePanel from "./MessagePanel.vue";
 
 export default {
   name: "ComponentChat",
+  emits: ["logOut"],
   setup() {
     const Chat = useChatStore();
     return { Chat };
@@ -50,21 +51,6 @@ export default {
     };
   },
   methods: {
-    // onMessage(content) {
-    //   console.log('content',content)
-    //   const id = Date.now()
-    //   const to = this.selectedUser.userID
-    //   //console.log('to',to)
-    //   if (this.selectedUser) {
-    //     this.Chat.addChat( id, content, to )
-    //     this.selectedUser.messages.push({
-    //       id,
-    //       content,
-    //       fromSelf: true,
-    //     });
-    //   }
-    // },
-
     onMessage(content) {
       const id = Date.now();
       const date = new Date().toLocaleTimeString(["it-IT"], {
@@ -106,10 +92,18 @@ export default {
       this.selectedUser = user;
       user.hasNewMessages = false;
     },
-    onLogout() {
-      localStorage.removeItem("sessionID");
-      localStorage.removeItem("userID");
-      window.location.href = "/";
+    logOUT() {
+      socket.on("user disconnected", (id) => {
+      for (let i = 0; i < this.users.length; i++) {
+        const user = this.users[i];
+        if (user.userID === id) {
+          user.connected = false;
+          break;
+        }
+      }
+    });
+      this.$emit("logOut");
+      //window.location.href = "/";
     },
     deleteChat(messageDel, msgindx) {
       console.log("onMesag", messageDel);
@@ -139,12 +133,12 @@ export default {
         if (socket.connected) {
           console.log("ada koneksi resend");
           this.Chat.addChat(id, content, date, to);
-          // socket.emit("private message", {
-          //   id,
-          //   content,
-          //   to,
-          //   sent: true,
-          // });
+          socket.emit("private message", {
+            id,
+            content,
+            to,
+            sent: true,
+          });
           this.selectedUser.messages.map((item) => {
             if (item.id == id) {
               item.sent = true;
@@ -226,31 +220,11 @@ export default {
       this.users.push(user);
     });
 
-    socket.on("user disconnected", (id) => {
-      for (let i = 0; i < this.users.length; i++) {
-        const user = this.users[i];
-        if (user.userID === id) {
-          user.connected = false;
-          break;
-        }
-      }
-    });
-
-    // socket.on("private message", ({ id, content, from, to }) => {
-    //   //console.log('to',to)
+    // socket.on("user disconnected", (id) => {
     //   for (let i = 0; i < this.users.length; i++) {
     //     const user = this.users[i];
-    //     console.log('useradd',useradd)
-    //     const fromSelf = socket.userID === from;
-    //     if (user.userID === (fromSelf ? to : from)) {
-    //       user.messages.push({
-    //         id,
-    //         content,
-    //         fromSelf,
-    //       });
-    //       if (user !== this.selectedUser) {
-    //         user.hasNewMessages = true;
-    //       }
+    //     if (user.userID === id) {
+    //       user.connected = false;
     //       break;
     //     }
     //   }

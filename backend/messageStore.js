@@ -1,10 +1,15 @@
 const Chat = require('./models/chat');
-const User = require('./models/user');
 
+var load = [];
 Chat.find((err, result) => {
   if (err) throw err;
-
-  this.messages = result;
+  if (result.length > 0) {
+    for (let i = 0; i < result.length; i++) {
+    //console.log('result', result)
+      load.push(result[i]);
+    }
+    //console.log('load', load)
+  }
 });
 /* abstract */ 
 class MessageStore {
@@ -15,14 +20,17 @@ class MessageStore {
 class InMemoryMessageStore extends MessageStore {
   constructor() {
     super();
-    this.messages = [];
+    this.messages = load;
   }
 
   saveMessage(message) {
     try {
       Chat.create(message)
+      //console.log('sebelum', this.messages)
+      //console.log('cht', message)
       this.messages.push(message);
       console.log('msg tersimpan')
+      //console.log('setelah', this.messages)
     } catch (e) {
       console.log('gagal save msg', e)
     }
@@ -43,6 +51,9 @@ class InMemoryMessageStore extends MessageStore {
   } 
 
   findMessagesForUser(userID) {
+    // console.log('ini hasil filter', this.messages.filter(
+    //   ({ from, to }) => from === userID || to === userID
+    // ))
     return this.messages.filter(
       ({ from, to }) => from === userID || to === userID
     );

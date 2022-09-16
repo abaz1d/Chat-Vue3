@@ -4,7 +4,10 @@
       v-if="!usernameAlreadySelected"
       @input="onUsernameSelection"
     />
-    <chat v-else />
+    <chat v-else 
+      @logOut="logOut"
+    />
+    <!-- <button class="btn-logout" @click="onLogout">LOG OUT</button> -->
   </div>
 </template>
 
@@ -30,6 +33,13 @@ export default {
       this.usernameAlreadySelected = true;
       socket.auth = { username };
       socket.connect();
+    },
+    logOut() {
+      //localStorage.removeItem("sessionID");
+      //localStorage.removeItem("userID");
+      socket.on("disconnect");
+      this.usernameAlreadySelected = false;
+      //window.location.href = "/";
     },
   },
   created() {
@@ -59,6 +69,7 @@ export default {
   },
   unmounted() {
     socket.off("connect_error");
+    socket.off("disconnect");
   },
 };
 </script>

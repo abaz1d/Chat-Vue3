@@ -4,10 +4,7 @@
       v-if="!usernameAlreadySelected"
       @input="onUsernameSelection"
     />
-    <chat v-else 
-      @logOut="logOut"
-    />
-    <!-- <button class="btn-logout" @click="onLogout">LOG OUT</button> -->
+    <chat v-else @logOut="logOut" />
   </div>
 </template>
 
@@ -36,10 +33,8 @@ export default {
     },
     logOut() {
       //localStorage.removeItem("sessionID");
-      //localStorage.removeItem("userID");
-      socket.on("disconnect");
+      localStorage.setItem("sessionID", "");
       this.usernameAlreadySelected = false;
-      //window.location.href = "/";
     },
   },
   created() {
@@ -69,23 +64,6 @@ export default {
   },
   unmounted() {
     socket.off("connect_error");
-    socket.off("disconnect");
   },
 };
 </script>
-
-<style>
-/* body {
-  margin: 0;
-}
-
-@font-face {
-  font-family: Lato;
-  src: url("/fonts/Lato-Regular.ttf");
-}
-
-#app {
-  font-family: Lato, Arial, sans-serif;
-  font-size: 14px;
-} */
-</style>

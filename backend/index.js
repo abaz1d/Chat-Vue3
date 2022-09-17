@@ -63,9 +63,7 @@ io.on("connection", (socket) => {
   // fetch existing users
   const users = [];
   const messagesPerUser = new Map();
-  //console.log('user', socket.userID)
   messageStore.findMessagesForUser(socket.userID).forEach((message) => {
-    //console.log('penting', message)
     const { from, to } = message;
     const otherUser = socket.userID === from ? to : from;
     if (messagesPerUser.has(otherUser)) {
@@ -75,8 +73,6 @@ io.on("connection", (socket) => {
     }
   });
   sessionStore.findAllSessions().forEach((session) => {
-   // console.log('sesiforeach', session)
-   // console.log('pesanya', messagesPerUser)
     users.push({
       userID: session.userID,
       username: session.username,
@@ -117,7 +113,6 @@ io.on("connection", (socket) => {
     socket.to(to).to(socket.userID).emit("delete message", message);
     messageStore.deleteMessage(msgdelid);
   });
-  socket.emit("user disconnected", socket.userID);
 
   // notify users upon disconnection
   socket.on("disconnect", async () => {

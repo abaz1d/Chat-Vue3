@@ -48,6 +48,7 @@ export default {
     return {
       selectedUser: null,
       users: [],
+      count: 0,
     };
   },
   methods: {
@@ -62,12 +63,6 @@ export default {
         if (socket.connected) {
           console.log("ada koneksi");
           this.Chat.addChat(id, content, date, to);
-          // socket.emit("private message", {
-          //   id,
-          //   content,
-          //   to,
-          //   // sent: true,
-          // });
           this.selectedUser.messages.push({
             id,
             content,
@@ -94,22 +89,20 @@ export default {
     },
     logOUT() {
       socket.on("user disconnected", (id) => {
-      for (let i = 0; i < this.users.length; i++) {
-        const user = this.users[i];
-        if (user.userID === id) {
-          user.connected = false;
-          break;
+        for (let i = 0; i < this.users.length; i++) {
+          const user = this.users[i];
+          if (user.userID === id) {
+            user.connected = false;
+            break;
+          }
         }
-      }
-    });
+      });
       this.$emit("logOut");
-      //window.location.href = "/";
     },
     deleteChat(messageDel, msgindx) {
       console.log("onMesag", messageDel);
       const to = this.selectedUser.userID;
       const msgdelid = messageDel.id;
-      //console.log('ini',to, from)
       if (this.selectedUser) {
         this.Chat.removeChat(msgdelid, to, msgindx);
         this.selectedUser.messages = this.selectedUser.messages.filter(
@@ -129,16 +122,9 @@ export default {
       const date = msgResend.date;
       const to = this.selectedUser.userID;
       if (this.selectedUser) {
-        //this.Chat.addChat( id, content, to )
         if (socket.connected) {
           console.log("ada koneksi resend");
           this.Chat.addChat(id, content, date, to);
-          socket.emit("private message", {
-            id,
-            content,
-            to,
-            sent: true,
-          });
           this.selectedUser.messages.map((item) => {
             if (item.id == id) {
               item.sent = true;
@@ -158,9 +144,6 @@ export default {
     },
   },
 
-  // mounted() {
-  //   console.log('mount',JSON.stringify(this.users))
-  // },
   created() {
     socket.on("connect", () => {
       this.users.forEach((user) => {
@@ -182,31 +165,32 @@ export default {
       user.hasNewMessages = false;
     };
 
-    socket.on("users", (users) => {
-      users.forEach((user) => {
-        user.messages.forEach((message) => {
-          message.fromSelf = message.from === socket.userID;
-        });
-        for (let i = 0; i < this.users.length; i++) {
-          const existingUser = this.users[i];
-          if (existingUser.userID === user.userID) {
-            existingUser.connected = user.connected;
-            existingUser.messages = user.messages;
-            return;
+      //make socket.once so that resend work
+      socket.once("users", (users) => {
+        users.forEach((user) => {
+          user.messages.forEach((message) => {
+            message.fromSelf = message.from === socket.userID;
+          });
+          for (let i = 0; i < this.users.length; i++) {
+            const existingUser = this.users[i];
+            if (existingUser.userID === user.userID) {
+              existingUser.connected = user.connected;
+              existingUser.messages = user.messages;
+              return;
+            }
           }
-        }
-        user.self = user.userID === socket.userID;
-        initReactiveProperties(user);
-        this.users.push(user);
+          user.self = user.userID === socket.userID;
+          initReactiveProperties(user);
+          this.users.push(user);
+        });
+        this.users.sort((a, b) => {
+          if (a.self) return -1;
+          if (b.self) return 1;
+          if (a.username < b.username) return -1;
+          return a.username > b.username ? 1 : 0;
+        });
       });
-      // put the current user first, and sort by username
-      this.users.sort((a, b) => {
-        if (a.self) return -1;
-        if (b.self) return 1;
-        if (a.username < b.username) return -1;
-        return a.username > b.username ? 1 : 0;
-      });
-    });
+
 
     socket.on("user connected", (user) => {
       for (let i = 0; i < this.users.length; i++) {
@@ -219,16 +203,6 @@ export default {
       initReactiveProperties(user);
       this.users.push(user);
     });
-
-    // socket.on("user disconnected", (id) => {
-    //   for (let i = 0; i < this.users.length; i++) {
-    //     const user = this.users[i];
-    //     if (user.userID === id) {
-    //       user.connected = false;
-    //       break;
-    //     }
-    //   }
-    // });
 
     socket.on("private message", ({ id, content, date, from, to, sent }) => {
       for (let i = 0; i < this.users.length; i++) {
@@ -251,7 +225,6 @@ export default {
     });
 
     socket.on("delete message", ({ to, from, msgindx }) => {
-      //console.log('chatIndex',chatIndex)
       for (let i = 0; i < this.users.length; i++) {
         const user = this.users[i];
         const fromSelf = socket.userID === from;
@@ -268,12 +241,6 @@ export default {
         }
       }
     });
-
-    socket.on("connect_error", function () {
-      if (this.selectedUser) {
-        console.log("ini errororororororor", this.selectedUser.messages);
-      }
-    });
   },
   unmounted() {
     socket.off("connect");
@@ -283,7 +250,6 @@ export default {
     socket.off("user disconnected");
     socket.off("private message");
     socket.off("delete message");
-    socket.off("connect_error");
   },
 };
 </script>

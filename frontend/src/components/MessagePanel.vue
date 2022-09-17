@@ -21,7 +21,13 @@
                 class="chat-item-actions"
                 @click="deleteCHAT(message, index)"
               >
-                <button type="button" class="btn  btn-lg">&#128465;</button>
+                <button
+                  @click="bdelete = false"
+                  type="button"
+                  class="btn btn-lg"
+                >
+                  &#128465;
+                </button>
               </div>
 
               <div
@@ -33,7 +39,7 @@
                   class="btn btn-warning"
                   @click="resendCHAT(message)"
                 >
-                &#8635;
+                  &#8635;
                 </button>
               </div>
 
@@ -103,7 +109,6 @@ export default {
     },
 
     resendCHAT(message) {
-      //console.log('resendChat', message)
       this.$emit("resendChat", message);
     },
 

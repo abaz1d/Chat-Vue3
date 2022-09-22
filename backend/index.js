@@ -4,12 +4,13 @@ const mongoose = require('mongoose');
 const io = require("socket.io")(httpServer, {
   cors: {
     origin: "http://54.169.229.212:5173/",
+    methods: ["GET", "POST"]
   },
 });
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', "http://54.169.229.212:5173/");
-  next();
-});
+// app.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Origin', "http://54.169.229.212:5173/");
+//   next();
+// });
 
 main().catch(err => console.log(err));
 

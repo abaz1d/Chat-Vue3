@@ -6,6 +6,10 @@ const io = require("socket.io")(httpServer, {
     origin: "http://54.169.229.212:5173/",
   },
 });
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
 
 main().catch(err => console.log(err));
 

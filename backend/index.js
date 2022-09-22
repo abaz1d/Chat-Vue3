@@ -7,7 +7,7 @@ const io = require("socket.io")(httpServer, {
   },
 });
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Origin', "http://54.169.229.212:5173/");
   next();
 });
 

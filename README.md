@@ -1,3 +1,7 @@
 # ⬇️ Chat-Vue3-Mongoose
 
-[![Gambar](https://i9.ytimg.com/vi/kVTX6w5UnVc/mq1.jpg?sqp=COCT6JkG&rs=AOn4CLBDPOT8mrNhqn8CPMF15Pg4ns9stg)](https://youtu.be/kVTX6w5UnVc)
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=kVTX6w5UnVc" target="_blank">
+ <img src="http://img.youtube.com/vi/kVTX6w5UnVc/mqdefault.jpg" alt="Watch the video" width="240" height="135" border="10" />
+</a>
+
+https://youtu.be/kVTX6w5UnVc

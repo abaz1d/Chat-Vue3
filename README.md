@@ -60,12 +60,12 @@ open new terminal to run client
 
 ```bash
 # Go inside the directory
-cd Laundry-App
+cd Chat-Vue3-Mongoose
 
-# Install dependencies for client mobile
-cd Chat-Vue3-Mongoose && npm install
+# Install dependencies for client
+cd frontend && npm install
 
-# Start client mobile
+# Start client
 npm run dev
 ```
 

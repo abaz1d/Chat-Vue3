@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is a simple full stack React application which provides a solid starting point for [Mongoose](https://mongoosejs.com/), [ExpressJS](https://expressjs.com/), [Vue.js](https://vuejs.org/) and [NodeJS](https://nodejs.org/en/) based applications. Client side code is written in React and the backend API is written using Express.
+This is a simple full stack Vue application which provides a solid starting point for [Mongoose](https://mongoosejs.com/), [ExpressJS](https://expressjs.com/), [Vue.js](https://vuejs.org/) and [NodeJS](https://nodejs.org/en/) based applications. Client side code is written in Vue and the backend API is written using Express.
 
 Chat is a program in an application that uses an internet connection and communication devices to be able to send messages from one person to another. So far, chat is the most efficient and effective form of communication today.
 
